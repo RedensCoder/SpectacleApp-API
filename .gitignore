@@ -1,0 +1,6 @@
+.env
+.idea
+/generated/prisma
+ca.crt
+node_modules
+prisma/migrations
