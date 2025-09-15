@@ -35,7 +35,12 @@ router.post("/create", async (req, res) => {
             }
         });
 
-        const filePath = path.join(__dirname, `../keys/${req.body.login}_private.pem`);
+        const dirPath = path.join(__dirname, "../keys");
+        const filePath = path.join(dirPath, `${req.body.login}_private.pem`);
+
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
 
         fs.writeFileSync(filePath, privateKey);
 
