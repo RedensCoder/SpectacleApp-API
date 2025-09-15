@@ -2,16 +2,18 @@ const express = require("express");
 const crypto = require('crypto');
 const prisma = require("../util/client");
 const {config} = require("dotenv");
-const {generateAccessToken, authenticateToken, authenticateTokenParams, authenticateTokenBody} = require("../util/security");
 const fs = require("fs");
 const path = require("path");
+
+const {generateAccessToken, authenticateToken, authenticateTokenParams, authenticateTokenBody} = require("../util/security");
+const {uploadFile, readFile} = require("../util/storage");
 
 config();
 
 const router = express.Router();
 
 router.post("/create", async (req, res) => {
-    if (!req.body.login || !req.body.password || !req.body.name || !req.body.lastName || !req.body.dateBirth) {
+    if (!req.body?.login || !req.body?.password || !req.body?.name || !req.body?.lastName || !req.body?.dateBirth) {
         return res.sendStatus(204);
     }
 
@@ -35,14 +37,7 @@ router.post("/create", async (req, res) => {
             }
         });
 
-        const dirPath = path.join(__dirname, "../keys");
-        const filePath = path.join(dirPath, `${req.body.login}_private.pem`);
-
-        if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
-        }
-
-        fs.writeFileSync(filePath, privateKey);
+        await uploadFile(`keys/${req.body.login}_private.pem`, privateKey);
 
         const createdUser = await prisma.users.create({
             data: {
