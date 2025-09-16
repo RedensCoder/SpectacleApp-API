@@ -61,7 +61,8 @@ router.post("/create", async (req, res) => {
 
         res.send({
             token,
-            privateKey
+            privateKey,
+            user: createdUser
         });
     }
 });
