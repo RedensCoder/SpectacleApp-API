@@ -67,4 +67,18 @@ router.post("/create", async (req, res) => {
     }
 });
 
+router.post("/check", async (req, res) => {
+    if (!req.body?.login || !req.body?.password) {
+        return res.sendStatus(204);
+    }
+
+    const user = await prisma.users.findFirst({where: {login: req.body.login}});
+
+    if (user !== null) {
+        res.sendStatus(409);
+    } else {
+        res.sendStatus(200);
+    }
+});
+
 module.exports = router;
