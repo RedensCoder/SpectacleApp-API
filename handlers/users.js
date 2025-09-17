@@ -20,7 +20,7 @@ router.post("/create", async (req, res) => {
     const user = await prisma.users.findFirst({where: {login: req.body.login}});
 
     if (user !== null) {
-        res.sendStatus(409);
+        return res.sendStatus(409);
     } else {
         const Hasher = crypto.createHmac("sha256", process.env.SECRET_TOKEN);
         const password = Hasher.update(req.body.password).digest("hex");
