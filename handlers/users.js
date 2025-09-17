@@ -62,7 +62,9 @@ router.post("/create", async (req, res) => {
         res.send({
             token,
             privateKey,
-            user: createdUser
+            user: JSON.stringify(
+                user, (key, value) => (typeof value === 'bigint' ? value.toString() : value)
+            )
         });
     }
 });
