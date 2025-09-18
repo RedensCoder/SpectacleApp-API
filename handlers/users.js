@@ -83,4 +83,32 @@ router.post("/check", async (req, res) => {
     }
 });
 
+router.post("/auth", async (req, res) => {
+    if (!req.body?.login || !req.body?.password) {
+        return res.sendStatus(204);
+    }
+
+    const Hasher = crypto.createHmac("sha256", process.env.SECRET_TOKEN);
+    const password = Hasher.update(req.body.password).digest("hex");
+
+    const user = await prisma.users.findFirst({where: {AND: {login: req.body.login, password}}});
+
+    if (user !== null) {
+        const privateKeyBuffer = await readFile(`keys/${req.body.login}_private.pem`);
+        const privateKey = privateKeyBuffer.toString("utf-8");
+
+        const token = generateAccessToken(Number(user.id), user.login);
+
+        res.send({
+            token,
+            privateKey,
+            user: JSON.stringify(
+                user, (key, value) => (typeof value === 'bigint' ? value.toString() : value)
+            )
+        });
+    } else {
+        return res.sendStatus(409);
+    }
+});
+
 module.exports = router;
