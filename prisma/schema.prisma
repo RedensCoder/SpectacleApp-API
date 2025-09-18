@@ -14,7 +14,9 @@ model Users {
   password String
   pKey     String
 
-  User_Infos User_infos? @relation("infos")
+  User_Infos            User_infos?    @relation("infos")
+  User_contacts         User_contacts? @relation("user")
+  User_contacts_contact User_contacts? @relation("contact")
 }
 
 model User_infos {
@@ -29,4 +31,12 @@ model User_infos {
   lastOnline DateTime @default(now())
   online     Boolean  @default(false)
   date_birth DateTime
+}
+
+model User_contacts {
+  id        BigInt @id @default(autoincrement())
+  userId    BigInt @unique
+  user      Users  @relation(name: "user", fields: [userId], references: [id])
+  contactId BigInt @unique
+  contact   Users  @relation(name: "contact", fields: [contactId], references: [id])
 }

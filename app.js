@@ -6,6 +6,7 @@ const fs = require("fs");
 const { readFile } = require("./util/storage");
 
 const User = require("./handlers/users");
+const Contact = require("./handlers/contacts");
 
 config();
 
@@ -21,6 +22,7 @@ const startServer = async () => {
     app.use(express.json());
 
     app.use("/user", User);
+    app.use("/contact", Contact);
 
     const PORT = process.env.PORT || 8080 || 3000;
     const server = app.listen(PORT, () => console.log(`✅Server running on port ${PORT}`));
