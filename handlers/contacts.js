@@ -15,7 +15,11 @@ router.get("/getContactByUserId/:id", authenticateTokenParams, async (req, res) 
            userId: Number(req.params.id)
        },
        include: {
-           contact: true
+           contact: {
+               include: {
+                   User_Infos: true
+               }
+           }
        }
    });
 
