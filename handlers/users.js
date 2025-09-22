@@ -83,7 +83,7 @@ router.post("/check", async (req, res) => {
     }
 });
 
-router.post("/auth", async (req, res) => {
+router.post("/auth", authenticateToken, async (req, res) => {
     if (!req.body?.login || !req.body?.password) {
         return res.sendStatus(204);
     }
@@ -109,6 +109,18 @@ router.post("/auth", async (req, res) => {
     } else {
         return res.sendStatus(409);
     }
+});
+
+router.get("/getUserById/:id", async (req, res) => {
+    const user = await prisma.user_infos.findFirst({
+        where: {
+            userId: Number(req.params.id)
+        }
+    });
+
+    return res.send(JSON.stringify(
+        user, (key, value) => (typeof value === 'bigint' ? value.toString() : value)
+    ))
 });
 
 module.exports = router;
